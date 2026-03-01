@@ -1,0 +1,48 @@
+name: Build Firmware
+
+on:
+  push:
+    branches:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: qmkfm/qmk_cli@sha256:a78acc2b7de1f476f33dd0d069c0e74ddfdb52c18b9a504c7cce32303cfa7aa2
+
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v6
+        with:
+          path: target-repo
+
+      - name: Checkout Vial-QMK
+        uses: actions/checkout@v6
+        with:
+          repository: sekigon-gonnoc/vial-qmk
+          ref: keyboard-quantizer-b
+          path: vial-qmk
+
+      - name: Replace keyboards directory
+        run: |
+          rm -rf vial-qmk/keyboards
+          cp -r target-repo/qmk_firmware/keyboards vial-qmk/
+
+      - name: Setup QMK
+        working-directory: vial-qmk
+        run: |
+          python3 -m pip install -r requirements.txt
+          python3 -m pip install nrfutil
+          qmk setup -y
+
+      - name: Build firmware
+        working-directory: vial-qmk
+        run: |
+          make keyboard_quantizer/kqb:default:zip
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: vial-qmk/.build/keyboard_quantizer_kqb_default.zip
