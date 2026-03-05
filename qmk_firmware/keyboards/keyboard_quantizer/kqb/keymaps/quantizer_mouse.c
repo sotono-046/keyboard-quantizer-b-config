@@ -10,10 +10,10 @@
 
 typedef enum {
     GESTURE_NONE = 0,
-    GESTURE_DOWN_RIGHT,
-    GESTURE_DOWN_LEFT,
-    GESTURE_UP_LEFT,
-    GESTURE_UP_RIGHT,
+    GESTURE_RIGHT,
+    GESTURE_DOWN,
+    GESTURE_LEFT,
+    GESTURE_UP,
 } gesture_id_t;
 
 typedef enum {
@@ -59,21 +59,15 @@ void set_mouse_gesture_threshold(uint16_t val) {
 }
 
 gesture_id_t recognize_gesture(int16_t x, int16_t y) {
-    gesture_id_t gesture_id = 0;
-
     if (abs(x) + abs(y) < mouse_gesture_threshold) {
-        gesture_id = GESTURE_NONE;
-    } else if (x >= 0 && y >= 0) {
-        gesture_id = GESTURE_DOWN_RIGHT;
-    } else if (x < 0 && y >= 0) {
-        gesture_id = GESTURE_DOWN_LEFT;
-    } else if (x < 0 && y < 0) {
-        gesture_id = GESTURE_UP_LEFT;
-    } else if (x >= 0 && y < 0) {
-        gesture_id = GESTURE_UP_RIGHT;
+        return GESTURE_NONE;
     }
 
-    return gesture_id;
+    if (abs(x) >= abs(y)) {
+        return x >= 0 ? GESTURE_RIGHT : GESTURE_LEFT;
+    } else {
+        return y >= 0 ? GESTURE_DOWN : GESTURE_UP;
+    }
 }
 
 static uint16_t dynamic_config_keymap_keycode_to_keycode(uint8_t layer, uint16_t keycode)
@@ -112,9 +106,9 @@ static int8_t get_mouse_scale(DYNAMIC_CONFIG_MOUSE_SCALE scale_type) {
 
 void process_gesture(uint8_t layer, gesture_id_t gesture_id) {
     switch (gesture_id) {
-        case GESTURE_DOWN_RIGHT ... GESTURE_UP_RIGHT: {
-            uint16_t keycode = dynamic_config_keymap_keycode_to_keycode(layer, (MATRIX_MSGES_ROW - 1) * 8 + gesture_id - GESTURE_DOWN_RIGHT);
-            if (keycode == MATRIX_MSGES_ROW * 8 + gesture_id - GESTURE_DOWN_RIGHT) {
+        case GESTURE_RIGHT ... GESTURE_UP: {
+            uint16_t keycode = dynamic_config_keymap_keycode_to_keycode(layer, (MATRIX_MSGES_ROW - 1) * 8 + gesture_id - GESTURE_RIGHT);
+            if (keycode == MATRIX_MSGES_ROW * 8 + gesture_id - GESTURE_RIGHT) {
                 return;
             }
             vial_keycode_tap(keycode);
