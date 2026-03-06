@@ -858,5 +858,23 @@
         "31,7\n\n\n0,3"
       ]
     ]
-  }
+  },
+  "menus": [
+    {
+      "label": "Mouse",
+      "content": [
+        {
+          "label": "Mouse Speed",
+          "content": [
+            {
+              "label": "Speed (1-32, default 16)",
+              "type": "range",
+              "options": [1, 32],
+              "content": ["id_custom_set_value", 0, 0]
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

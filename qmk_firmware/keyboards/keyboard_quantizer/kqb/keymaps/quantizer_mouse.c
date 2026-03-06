@@ -90,18 +90,21 @@ static uint16_t get_remapped_keycode_from_keycode(uint16_t keycode) {
     return dynamic_config_keymap_keycode_to_keycode(0, keycode);
 }
 
-static int8_t get_mouse_scale(DYNAMIC_CONFIG_MOUSE_SCALE scale_type) {
-    return (16);
-    // for (uint16_t layer = 15; layer > 0; layer--) {
-    //     if (layer_state & (1 << layer)) {
-    //         int8_t scale = dynamic_config_get_mouse_scale(layer, scale_type);
-    //         if (scale != MOUSE_SCALE_TRNS) {
-    //             return scale;
-    //         }
-    //     }
-    // }
+// mouse_speed: 1-32, default 16 (x1.0 at scale>>4)
+static uint8_t mouse_speed = 16;
 
-    // return dynamic_config_get_mouse_scale(0, scale_type);
+void set_mouse_speed(uint8_t speed) {
+    if (speed >= 1 && speed <= 32) {
+        mouse_speed = speed;
+    }
+}
+
+uint8_t get_mouse_speed(void) {
+    return mouse_speed;
+}
+
+static int8_t get_mouse_scale(DYNAMIC_CONFIG_MOUSE_SCALE scale_type) {
+    return (int8_t)mouse_speed;
 }
 
 void process_gesture(uint8_t layer, gesture_id_t gesture_id) {

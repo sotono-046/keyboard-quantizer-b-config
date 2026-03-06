@@ -154,6 +154,12 @@ void keyboard_post_init_kb(void) {
     keyboard_config.gesture_threshold = keyboard_config.gesture_threshold == 0 ? 50 : keyboard_config.gesture_threshold;
     set_mouse_gesture_threshold(keyboard_config.gesture_threshold);
     set_auto_sleep_timeout(keyboard_config.sleep * 10 * 60 * 1000);
+
+    // Restore mouse speed from EEPROM (stored in user config byte)
+    uint8_t saved_speed = (uint8_t)eeconfig_read_user();
+    if (saved_speed >= 1 && saved_speed <= 32) {
+        set_mouse_speed(saved_speed);
+    }
 }
 
 void eeconfig_init_kb(void) {
@@ -461,4 +467,40 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     }
 
     return cont;
+}
+
+// Vial custom UI: channel 0, id 0 = mouse speed (1-32)
+#define KQB_CUSTOM_CHANNEL 0
+#define KQB_CUSTOM_ID_MOUSE_SPEED 0
+
+void via_custom_value_command_kb(uint8_t *data, uint8_t length) {
+    uint8_t command = data[0];
+    uint8_t channel = data[1];
+    uint8_t id      = data[2];
+
+    if (channel != KQB_CUSTOM_CHANNEL) {
+        data[0] = id_unhandled;
+        return;
+    }
+
+    switch (command) {
+        case id_custom_set_value:
+            if (id == KQB_CUSTOM_ID_MOUSE_SPEED) {
+                uint8_t speed = data[3];
+                set_mouse_speed(speed);
+                eeconfig_update_user(speed);
+            }
+            break;
+        case id_custom_get_value:
+            if (id == KQB_CUSTOM_ID_MOUSE_SPEED) {
+                data[3] = get_mouse_speed();
+            }
+            break;
+        case id_custom_save:
+            // already saved on set
+            break;
+        default:
+            data[0] = id_unhandled;
+            break;
+    }
 }
