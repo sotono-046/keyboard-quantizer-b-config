@@ -90,8 +90,8 @@ static uint16_t get_remapped_keycode_from_keycode(uint16_t keycode) {
     return dynamic_config_keymap_keycode_to_keycode(0, keycode);
 }
 
-// mouse_speed: 1-32, default 16 (x1.0 at scale>>4)
-static uint8_t mouse_speed = 16;
+// mouse_speed: 1-32, default 32 (x2.0 at scale>>4)
+static uint8_t mouse_speed = 32;
 
 void set_mouse_speed(uint8_t speed) {
     if (speed >= 1 && speed <= 32) {
