@@ -157,7 +157,7 @@ void keyboard_post_init_kb(void) {
 
     // Restore mouse speed from EEPROM (stored in user config byte)
     uint8_t saved_speed = (uint8_t)eeconfig_read_user();
-    if (saved_speed >= 1 && saved_speed <= 32) {
+    if (saved_speed >= 1 && saved_speed <= 50) {
         set_mouse_speed(saved_speed);
     }
 }
