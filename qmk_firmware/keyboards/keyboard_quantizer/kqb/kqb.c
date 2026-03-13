@@ -463,7 +463,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
         case QK_KB_25: // MS_SPD_U
             if (record->event.pressed) {
                 uint8_t s = get_mouse_speed();
-                s = s < 30 ? s + 2 : 32;
+                s = s < 48 ? s + 2 : 50;
                 set_mouse_speed(s);
                 eeconfig_update_user(s);
             }
