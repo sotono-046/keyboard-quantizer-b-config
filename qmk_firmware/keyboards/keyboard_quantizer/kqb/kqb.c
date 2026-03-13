@@ -459,6 +459,24 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 return true;
             }
             break;
+
+        case QK_KB_25: // MS_SPD_U
+            if (record->event.pressed) {
+                uint8_t s = get_mouse_speed();
+                s = s < 30 ? s + 2 : 32;
+                set_mouse_speed(s);
+                eeconfig_update_user(s);
+            }
+            return false;
+
+        case QK_KB_26: // MS_SPD_D
+            if (record->event.pressed) {
+                uint8_t s = get_mouse_speed();
+                s = s > 2 ? s - 2 : 1;
+                set_mouse_speed(s);
+                eeconfig_update_user(s);
+            }
+            return false;
     }
 
     bool cont = process_record_bmp(keycode, record);
@@ -469,38 +487,3 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     return cont;
 }
 
-// Vial custom UI: channel 0, id 0 = mouse speed (1-32)
-#define KQB_CUSTOM_CHANNEL 0
-#define KQB_CUSTOM_ID_MOUSE_SPEED 0
-
-void via_custom_value_command_kb(uint8_t *data, uint8_t length) {
-    uint8_t command = data[0];
-    uint8_t channel = data[1];
-    uint8_t id      = data[2];
-
-    if (channel != KQB_CUSTOM_CHANNEL) {
-        data[0] = id_unhandled;
-        return;
-    }
-
-    switch (command) {
-        case id_custom_set_value:
-            if (id == KQB_CUSTOM_ID_MOUSE_SPEED) {
-                uint8_t speed = data[3];
-                set_mouse_speed(speed);
-                eeconfig_update_user(speed);
-            }
-            break;
-        case id_custom_get_value:
-            if (id == KQB_CUSTOM_ID_MOUSE_SPEED) {
-                data[3] = get_mouse_speed();
-            }
-            break;
-        case id_custom_save:
-            // already saved on set
-            break;
-        default:
-            data[0] = id_unhandled;
-            break;
-    }
-}

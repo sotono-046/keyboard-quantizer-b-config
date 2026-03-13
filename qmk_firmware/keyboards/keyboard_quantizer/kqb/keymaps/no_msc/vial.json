@@ -128,6 +128,16 @@
       "name": "ENABLE_JP_KEY_ON_US_OS_OVERRIDE",
       "title": "Enable JP keyboard on US OS override",
       "shortName": "JU\nOVR"
+    },
+    {
+      "name": "MS_SPD_U",
+      "title": "Mouse Speed Up (+2)",
+      "shortName": "MS\nSPD+"
+    },
+    {
+      "name": "MS_SPD_D",
+      "title": "Mouse Speed Down (-2)",
+      "shortName": "MS\nSPD-"
     }
   ],
   "layouts": {
@@ -859,22 +869,4 @@
       ]
     ]
   },
-  "menus": [
-    {
-      "label": "Mouse",
-      "content": [
-        {
-          "label": "Mouse Speed",
-          "content": [
-            {
-              "label": "Speed (1-32, default 16)",
-              "type": "range",
-              "options": [1, 32],
-              "content": ["id_custom_set_value", 0, 0]
-            }
-          ]
-        }
-      ]
-    }
-  ]
 }
